@@ -1,0 +1,67 @@
+package jaintri;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+public class Jaintri_Test {
+//	Test Scenarios to Automate (without valid credentials): 
+//	Attempt login with blank fields and verify UI behavior 
+//	Enter any random credentials and click login – capture and print any error message shown 
+//	Validate password masking/unmasking toggle 
+//	Validate presence of page elements (e.g., title, input fields, eye icon)
+
+	    private WebDriver driver;
+	    private LoginPage loginPage;
+
+	    @BeforeClass
+	    public void setUp() {
+	        driver = new ChromeDriver();
+	        driver.manage().window().maximize();
+	        loginPage = new LoginPage(driver);
+	        loginPage.open();
+	    }
+
+	    @Test
+	    public void loginWithBlankFieldTest() {
+	        loginPage.testLoginButtonDisabledWhenFieldAreEmpty();
+	    }
+
+	    @Test
+	    public void passwordMaskingTest() {
+	        loginPage.testPasswordMaskedbutton();
+	    }
+
+	    @Test
+	    public void presenceOfElementTest() {
+	        loginPage.testIfElementIsPresent();
+	    }
+
+	    @Test(dataProvider = "dp")
+	    public void loginInValid_CredendiatlsTest(String username, String password) {
+	        loginPage.testInvalidLoginShowErrorMsg(username, password);
+	    }
+
+	    @DataProvider(name = "dp", parallel = false)
+	    public Object[][] dp() {
+	        return new Object[][]{
+	                {"Nayak", "Khalnay@k"},
+	                {"Mike", "Empty8n@ll"},
+	                {"Nike", "12345678"},
+	                {"L@l@", "L@l@"},
+	                {"Hi456", "#$%@"}
+	        };
+	    }
+
+	    @AfterClass
+	    public void tearDown() {
+	        if (driver != null) {
+	            driver.quit();
+	        }
+	    }
+}
+
+	

@@ -1,0 +1,82 @@
+package jaintri;
+
+import java.time.Duration;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait; 
+
+public class LoginPage {
+
+    private WebDriver driver;
+    private WebDriverWait wait;
+
+    // Locators
+    private By Email = By.id("formEmail");
+    private By Password = By.id("formPassword");
+    private By eyeIcon = By.className("passowrd-visible"); // check typo in HTML
+    private By submit = By.className("login-button");
+
+    // Constructor
+    public LoginPage(WebDriver driver) {
+        this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+    }
+
+    public void open() {
+        driver.get("https://dev-dash.janitri.in/");
+    }
+
+    public void testLoginButtonDisabledWhenFieldAreEmpty() {
+        driver.findElement(submit).click();
+        // here you can assert if button remains disabled
+    }
+
+    public void testPasswordMaskedbutton() {
+        WebElement eye = driver.findElement(eyeIcon);
+        eye.click();
+        // Check the password input field type
+        String type = driver.findElement(Password).getAttribute("type");
+        if (type.equals("text")) {
+            System.out.println("✅ Password is visible (unmasked)");
+        } else {
+            System.out.println("✅ Password is masked");
+        }
+    }
+
+    public void testInvalidLoginShowErrorMsg(String s, String a) {
+        driver.findElement(Email).clear();
+        driver.findElement(Email).sendKeys(s);
+        driver.findElement(Password).clear();
+        driver.findElement(Password).sendKeys(a);
+        driver.findElement(submit).click();
+        String errorMsg = driver.findElement(By.className("normal-text")).getText();
+        System.out.println("Error message: " + errorMsg);
+    }
+
+    public void testIfElementIsPresent() {
+        if (!isElementPresent(Email)) {
+            System.out.println("❌ Email field is NOT present");
+        }
+        if (!isElementPresent(Password)) {
+            System.out.println("❌ Password field is NOT present");
+        }
+        if (!isElementPresent(submit)) {
+            System.out.println("❌ Login button is NOT present");
+        }
+        if (!isElementPresent(eyeIcon)) {
+            System.out.println("❌ Eye icon is NOT present");
+        }
+    }
+
+    // Helper
+    private boolean isElementPresent(By locator) {
+        try {
+            wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+}
